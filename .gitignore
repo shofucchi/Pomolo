@@ -1,0 +1,45 @@
+# =========================
+# Xcode
+# =========================
+
+# User settings
+xcuserdata/
+*.xcuserstate
+
+# Xcode local files
+*.moved-aside
+*.xccheckout
+*.xcscmblueprint
+
+# Build products
+DerivedData/
+build/
+
+# Archives
+*.xcarchive
+
+# Swift Package Manager
+.build/
+
+# =========================
+# App
+# =========================
+
+# Logs
+*.log
+
+# Temp
+*.tmp
+*.swp
+*.swo
+
+# macOS
+.DS_Store
+
+# =========================
+# Secrets / Env
+# =========================
+
+# API Keys
+.env
+.env.*
