@@ -43,3 +43,6 @@ build/
 # API Keys
 .env
 .env.*
+
+# Xcodegen
+*.xcodeproj/
