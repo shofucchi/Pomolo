@@ -25,6 +25,7 @@ fileGroups:
   - Makefile
   - Mintfile
   - .gitignore
+  - README.md
 
 # プロジェクトで使うローカル Swift Package
 packages:
