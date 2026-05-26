@@ -31,7 +31,7 @@ fileGroups:
 packages:
   SwiftFormatPlugin:
     # ビルド中に SwiftFormat を実行するための build tool plugin package
-    path: Packages/SwiftFormatPlugin
+    path: BuildTool/SwiftFormatPlugin
 
 # 下で上書きしない限り各ターゲットに継承される、プロジェクト共通のビルド設定
 settings:
