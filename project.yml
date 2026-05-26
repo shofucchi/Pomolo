@@ -112,7 +112,7 @@ targets:
     type: application
     platform: iOS
     sources:
-      # Xcode 26 の同期フォルダです。Pomolo/ 配下のファイルがファイルシステムと同期される
+      # Xcode 26 の同期フォルダ。Pomolo/ 配下の Swift、Assets.xcassets、AppIcon.icon がターゲットに含まれる
       - path: Pomolo
         type: syncedFolder
     buildToolPlugins:
@@ -121,7 +121,8 @@ targets:
         package: SwiftFormatPlugin
     settings:
       base:
-        # アプリ識別子、生成される Info.plist のキー、Asset Catalog 名、Swift 言語設定
+        # アプリ識別子、生成される Info.plist のキー、App Icon / Asset Catalog 名、Swift 言語設定
+        # AppIcon.icon を使うため、App Icon 名は拡張子なしの AppIcon に合わせる
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
         CODE_SIGN_STYLE: Automatic
