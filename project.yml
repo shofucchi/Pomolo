@@ -26,6 +26,8 @@ fileGroups:
   - Mintfile
   - .gitignore
   - README.md
+  - AGENTS.md
+  - .codex/
 
 # プロジェクトで使うローカル Swift Package
 packages:
