@@ -1,0 +1,204 @@
+# Codex command execution policy for this repository.
+#
+# Rules control commands that Codex requests to run outside the sandbox.
+# Commands that do not match these rules should follow the active approval
+# policy.
+
+# Repository inspection
+prefix_rule(
+    pattern = ["pwd"],
+    decision = "allow",
+    justification = "Reading the current directory is safe.",
+    match = ["pwd"],
+)
+
+prefix_rule(
+    pattern = ["ls"],
+    decision = "allow",
+    justification = "Listing repository files is safe.",
+    match = ["ls -la", "ls Pomolo"],
+)
+
+prefix_rule(
+    pattern = ["find"],
+    decision = "allow",
+    justification = "Finding files is safe when used for repository inspection.",
+    match = ["find . -name AGENTS.md"],
+)
+
+prefix_rule(
+    pattern = ["sed"],
+    decision = "allow",
+    justification = "Reading file snippets is safe.",
+    match = ["sed -n 1,120p AGENTS.md"],
+)
+
+prefix_rule(
+    pattern = ["cat"],
+    decision = "allow",
+    justification = "Reading files is safe.",
+    match = ["cat AGENTS.md"],
+)
+
+prefix_rule(
+    pattern = ["wc"],
+    decision = "allow",
+    justification = "Counting file contents is safe.",
+    match = ["wc -l AGENTS.md"],
+)
+
+prefix_rule(
+    pattern = ["git", ["status", "diff", "log", "show", "branch"]],
+    decision = "allow",
+    justification = "Read-only git commands are safe for repository inspection.",
+    match = [
+        "git status --short",
+        "git diff",
+        "git log --oneline -5",
+        "git show HEAD",
+        "git branch --show-current",
+    ],
+    not_match = [
+        "git pull",
+        "git push",
+        "git commit",
+    ],
+)
+
+# Project-local development commands
+prefix_rule(
+    pattern = ["make", ["help", "bootstrap", "generate", "open"]],
+    decision = "allow",
+    justification = "These Makefile targets are the documented project workflow.",
+    match = [
+        "make help",
+        "make bootstrap",
+        "make generate",
+        "make open",
+    ],
+)
+
+prefix_rule(
+    pattern = ["mint", "bootstrap"],
+    decision = "allow",
+    justification = "Mint bootstrap is the documented dependency setup command for this repository.",
+    match = ["mint bootstrap"],
+)
+
+prefix_rule(
+    pattern = ["mint", "run", "xcodegen", "generate"],
+    decision = "allow",
+    justification = "XcodeGen project generation is the documented project workflow.",
+    match = ["mint run xcodegen generate"],
+)
+
+# Build and validation
+prefix_rule(
+    pattern = ["xcodebuild"],
+    decision = "allow",
+    justification = "Xcode build and validation commands are expected for this iOS project.",
+    match = ["xcodebuild -project Pomolo.xcodeproj -scheme Pomolo build"],
+)
+
+prefix_rule(
+    pattern = ["swift", ["build", "test", "package"]],
+    decision = "allow",
+    justification = "Swift build, test, and package commands are expected validation commands.",
+    match = [
+        "swift build",
+        "swift test",
+        "swift package resolve",
+    ],
+)
+
+# Dependency, network, GUI, and environment-changing operations
+prefix_rule(
+    pattern = ["open"],
+    decision = "prompt",
+    justification = "Opening GUI apps should be confirmed by the user.",
+    match = ["open Pomolo.xcodeproj"],
+)
+
+prefix_rule(
+    pattern = [["curl", "wget", "brew", "gem", "npm", "npx", "pip", "pip3"]],
+    decision = "prompt",
+    justification = "Network, package-manager, and dependency-changing commands require user approval.",
+    match = [
+        "curl https://example.com",
+        "wget https://example.com/file",
+        "brew install swiftformat",
+        "npm install",
+        "pip install requests",
+    ],
+)
+
+prefix_rule(
+    pattern = ["git", ["pull", "push", "fetch", "merge", "rebase", "commit", "tag"]],
+    decision = "prompt",
+    justification = "Git commands that change repository state or contact remotes require user approval.",
+    match = [
+        "git pull",
+        "git push",
+        "git fetch",
+        "git merge main",
+        "git rebase main",
+        "git commit -m update",
+        "git tag v1.0.0",
+    ],
+)
+
+# Destructive or privilege-changing operations
+prefix_rule(
+    pattern = [["sudo", "su"]],
+    decision = "forbidden",
+    justification = "Privilege escalation is not allowed from repository rules.",
+    match = [
+        "sudo make install",
+        "su",
+    ],
+)
+
+prefix_rule(
+    pattern = ["rm", ["-rf", "-fr"]],
+    decision = "forbidden",
+    justification = "Recursive force deletion is destructive and must not be run by Codex.",
+    match = [
+        "rm -rf build",
+        "rm -fr DerivedData",
+    ],
+)
+
+prefix_rule(
+    pattern = ["chmod", "-R"],
+    decision = "forbidden",
+    justification = "Recursive permission changes are destructive and must not be run by Codex.",
+    match = ["chmod -R 777 ."],
+)
+
+prefix_rule(
+    pattern = ["chown"],
+    decision = "forbidden",
+    justification = "Ownership changes are not allowed from repository rules.",
+    match = ["chown user file"],
+)
+
+prefix_rule(
+    pattern = ["git", "reset", "--hard"],
+    decision = "forbidden",
+    justification = "Hard resets can discard user work and must not be run by Codex.",
+    match = ["git reset --hard HEAD"],
+)
+
+prefix_rule(
+    pattern = ["git", "clean"],
+    decision = "forbidden",
+    justification = "Git clean can delete untracked user files and must not be run by Codex.",
+    match = ["git clean -fd"],
+)
+
+prefix_rule(
+    pattern = ["git", "checkout", "--"],
+    decision = "forbidden",
+    justification = "Checking out paths can discard user work and must not be run by Codex.",
+    match = ["git checkout -- Pomolo/ContentView.swift"],
+)
